@@ -94,6 +94,12 @@ app.get('/read', async (req, res) => {
 	if (!code) return res.json({ message: 'Input parameter code' });
 	try {
 		const result = await getID(code);
+		const images = await Promise.all(
+			result.pages.map(async (url) => {
+				const response = await axios.get(url, { responseType: 'arraybuffer' });
+				return Buffer.from(response.data).toString('base64');
+			})
+		);
 		const html = `
 			<!DOCTYPE html>
 			<head>
@@ -102,19 +108,19 @@ app.get('/read', async (req, res) => {
 				<title>${result.title.english}</title>
 				<style>
 					img { display: block; margin: auto; width: 100%; }
-					body { background-color: #1a202c; }
+					body { background-color: #1a202c; color: #ffffff; text-align: center; }
 					@media (min-width: 576px) { img { width: auto; max-width: 100%; height: auto; } }
 				</style>
 			</head>
 			<body>
-				${result.pages.map((url) => `<img src="${url}">`).join('')}
+				<h1>${result.title.english}</h1>
+				${images.map((img) => `<img src="data:image/jpeg;base64,${img}">`).join('')}
 			</body>`;
 		res.send(html);
 	} catch (err) {
 		res.json({ error: err.message });
 	}
 });
-
 app.get('/pdf', async (req, res) => {
 	const code = req.query.code;
 	if (!code) return res.json({ message: 'Input parameter code' });
