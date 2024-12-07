@@ -113,9 +113,19 @@ app.get('/read', async (req, res) => {
 				</style>
 			</head>
 			<body>
+			    <h3>Server uptime</h3>
 				<h1>${result.title.english}</h1>
 				${images.map((img) => `<img src="data:image/jpeg;base64,${img}">`).join('')}
-			</body>`;
+			</body>
+			<script>
+			setInterval(async () => {
+			const uptime = Math.floor(process.uptime()); // Uptime dalam detik
+            const hours = String(Math.floor(uptime / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((uptime % 3600) / 60)).padStart(2, '0');
+            const seconds = String(uptime % 60).padStart(2, '0');
+			document.getElementById("uptime").innerHTML = `${hours}:${minutes}:${seconds}`
+			},1000)
+			</script>`;
 		res.send(html);
 	} catch (err) {
 		res.json({ error: err.message });
