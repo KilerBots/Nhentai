@@ -39,7 +39,7 @@ async function getID(id) {
 			let data = await nh(id);
 			let pages = data.images.pages.map((v, i) => {
 				let ext = new URL(v.t).pathname.split('.')[1];
-				return `https://external-content.duckduckgo.com/iu/?u=https://i7.nhentai.net/galleries/${data.media_id}/${i + 1}.${ext}`;
+				return `https://zorocdn.xyz/galleries/${data.media_id}/${i + 1}.${ext}`;
 			});
 			let tags = data.tags.reduce((acc, tag) => {
 				acc[tag.type] = acc[tag.type] || [];
@@ -49,7 +49,7 @@ async function getID(id) {
 			resolve({
 				id: data.id,
 				title: data.title,
-				thumb: `https://external-content.duckduckgo.com/iu/?u=https://t.nhentai.net/galleries/${data.media_id}/thumb.jpg`,
+				thumb: `https://zorocdn.xyz/galleries/3069264/thumb.jpg/${data.media_id}/thumb.jpg`,
 				pages,
 				tag: tags.tag || [],
 				artist: tags.artist || [],
