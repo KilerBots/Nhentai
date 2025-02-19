@@ -89,13 +89,13 @@ res.json({ message: e.message })
 
 app.get('/search', async (req, res) => {
 const query = req.query.q
-if (!query) return res.json({ message: 'Input parameter query' })
+if (!query) return res.json({ message: 'Input parameter q' })
 try {
 const result = await nhentaiSearch(query)
 res.json(result)
 } catch (e) {
 console.error(e)
-res.json({ message: e.message })
+res.json({ status: e?.status, message: e.message })
 }
 })
 
