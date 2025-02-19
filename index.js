@@ -35,7 +35,7 @@ let data = JSON.parse(json)
 data.images.pages = data.images.pages.map((v, i) => `https://zorocdn.xyz/galleries/${data.media_id}/${i + 1}.jpg`)
 data.images.cover = `https://zorocdn.xyz/galleries/${data.media_id}/cover.jpg`
 data.images.thumbnail = `https://zorocdn.xyz/galleries/${data.media_id}/thumb.jpg`
-data.tags = data.tags.map(tags => tags.type)
+data.tags = data.tags.map(tags => tags.name)
 return data
 }
 
