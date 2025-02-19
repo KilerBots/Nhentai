@@ -88,7 +88,7 @@ res.json({ message: e.message })
 })
 
 app.get('/search', async (req, res) => {
-const { query } = req.query
+const query = req.query.query
 if (!query) return res.json({ message: 'Input parameter query' })
 try {
 const result = await nhentaiSearch(query)
