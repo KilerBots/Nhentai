@@ -35,7 +35,7 @@ let data = JSON.parse(json)
 data.images.pages = data.images.pages.map((v, i) => `https://zorocdn.xyz/galleries/${data.media_id}/${i + 1}.jpg`)
 data.images.cover = `https://zorocdn.xyz/galleries/${data.media_id}/cover.jpg`
 data.images.thumbnail = `https://zorocdn.xyz/galleries/${data.media_id}/thumb.jpg`
-data.tags = data.tags.map(tags => tags.name)
+data.tags = data.tags.map(tags => tags.type)
 return data
 }
 
@@ -88,7 +88,7 @@ res.json({ message: e.message })
 })
 
 app.get('/search', async (req, res) => {
-const query = req.query.query
+const { query } = req.query
 if (!query) return res.json({ message: 'Input parameter query' })
 try {
 const result = await nhentaiSearch(query)
@@ -122,12 +122,11 @@ const code = req.query.code
 if (!code) return res.json({ message: 'Input parameter code' })
 try {
 const result = await nhentaiDL(code)
-const images = await Promise.all(
-result.images.pages.map(async (url) => {
+let images = result.images.pages.map(async (url) => {
 const response = await axios.get(url, { responseType: 'arraybuffer' })
 return Buffer.from(response.data).toString('base64')
 })
-)
+
 const html = `
 <!DOCTYPE html>
 <head>
