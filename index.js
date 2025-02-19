@@ -26,7 +26,7 @@ doc.end()
 }
 
 async function nhentaiDL(id) {
-const html = await (await axios.get('https://nhentai.net/g/63849'+id)).data
+const html = await (await axios.get('https://nhentai.net/g/'+id)).data
 const match = html.match(/JSON\.parse\((['"`])(.+?)\1\)/)
 
 if(match) {
