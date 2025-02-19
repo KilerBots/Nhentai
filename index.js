@@ -122,10 +122,12 @@ const code = req.query.code
 if (!code) return res.json({ message: 'Input parameter code' })
 try {
 const result = await nhentaiDL(code)
-let images = result.images.pages.map(async (url) => {
+let images = await Promise.all(
+result.images.pages.map(async (url) => {
 const response = await axios.get(url, { responseType: 'arraybuffer' })
 return Buffer.from(response.data).toString('base64')
 })
+)
 
 const html = `
 <!DOCTYPE html>
