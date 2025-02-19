@@ -68,7 +68,7 @@ res.json({
 runtime: new Date(process.uptime() * 1000).toTimeString().split(' ')[0],
 endpoint: {
 detail: `${baseUrl}/detail?code=212121`,
-search: `${baseUrl}/search?query=yuusha`,
+search: `${baseUrl}/search?q=yuusha`,
 pdf: `${baseUrl}/pdf?code=212121`,
 read: `${baseUrl}/read?code=212121`,
 },
@@ -88,7 +88,7 @@ res.json({ message: e.message })
 })
 
 app.get('/search', async (req, res) => {
-const { query } = req.query
+const query = req.query.q
 if (!query) return res.json({ message: 'Input parameter query' })
 try {
 const result = await nhentaiSearch(query)
