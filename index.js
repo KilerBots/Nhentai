@@ -123,7 +123,7 @@ if (!code) return res.json({ message: 'Input parameter code' })
 try {
 const result = await nhentaiDL(code)
 const images = await Promise.all(
-result.pages.images.map(async (url) => {
+result.images.pages.map(async (url) => {
 const response = await axios.get(url, { responseType: 'arraybuffer' })
 return Buffer.from(response.data).toString('base64')
 })
