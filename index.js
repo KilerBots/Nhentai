@@ -109,21 +109,28 @@ res.json({ status: e?.status, message: e.message })
 
 app.get('/pdf', async (req, res) => {
 const code = req.query.code
-if (!code) return res.json({ message: 'Input parameter code' })
+if (!code) return res.status(400).json({ message: 'Input parameter code' })
+
 try {
 const result = await nhentaiDL(code)
+if (!result || !result.images || !Array.isArray(result.images.pages) || result.images.pages.length === 0) {
+return res.status(404).json({ message: 'No images found for this code' })
+}
+
 const pdfBuffer = await toPDF(result.images.pages)
+let title = result.title.english || result.title.pretty || 'document'
+
 res.set({
 'Content-Type': 'application/pdf',
-'Content-Disposition': `attachment; filename="${result.title.english || 'document'}.pdf"`
+'Content-Disposition': `attachment; filename="${title}.pdf"`
 })
+
 res.send(pdfBuffer)
 } catch (e) {
 console.error(e)
-res.json({ message: e.message })
+res.status(500).json({ message: 'Failed to generate PDF', error: e.message })
 }
 })
-
 
 app.get('/read', async (req, res) => {
 const code = req.query.code
