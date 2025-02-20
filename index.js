@@ -9,21 +9,36 @@ app.set('json spaces', 4)
 app.use(morgan('dev'))
 app.use(express.json())
 
-function toPDF(images, opt = {}) {
+function toPDF(images) {
+if (!Array.isArray(images)) images = [images];
+
 return new Promise(async (resolve, reject) => {
-if (!Array.isArray(images)) images = [images]
-let buffs = [], doc = new PDFDocument({ margin: 0, size: 'A4' })
-for (let x = 0; x < images.length; x++) {
-if (/.webp|.gif/.test(images[x])) continue
-let data = (await axios.get(images[x], { responseType: 'arraybuffer', ...opt })).data
-doc.image(data, 0, 0, { fit: [595.28, 841.89], align: 'center', valign: 'center' })
-if (images.length != x + 1) doc.addPage()
+let buffers = [];
+const doc = new PDFDocument({ margin: 0, size: 'A4' });
+
+doc.on('data', buffers.push.bind(buffers));
+doc.on('end', () => resolve(Buffer.concat(buffers)));
+
+try {
+let validCount = 0;
+for (const url of images) {
+//if (/\.(webp|gif)$/i.test(url)) continue;
+if (validCount > 0) doc.addPage();
+
+const { data } = await axios.get(url, { responseType: 'arraybuffer' });
+doc.image(data, 0, 0, {
+fit: [595.28, 841.89],
+align: 'center',
+valign: 'center'
+});
+
+validCount++;
 }
-doc.on('data', (chunk) => buffs.push(chunk))
-doc.on('end', () => resolve(Buffer.concat(buffs)))
-doc.on('error', (err) => reject(err))
-doc.end()
-})
+doc.end();
+} catch (error) {
+reject(error);
+}
+});
 }
 
 async function nhentaiDL(id) {
