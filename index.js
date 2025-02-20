@@ -112,7 +112,7 @@ const code = req.query.code
 if (!code) return res.json({ message: 'Input parameter code' })
 try {
 const result = await nhentaiDL(code)
-const pdfBuffer = await toPDF(result.pages)
+const pdfBuffer = await toPDF(result.images.pages)
 res.set({
 'Content-Type': 'application/pdf',
 'Content-Disposition': `attachment; filename="${result.title.english || 'document'}.pdf"`
