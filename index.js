@@ -1,4 +1,5 @@
 const axios = require('axios')
+const cheerio = require('cheerio')
 const morgan = require('morgan')
 const express = require('express')
 const PDFDocument = require('pdfkit')
@@ -27,18 +28,25 @@ doc.end()
 
 async function nhentaiDL(id) {
 const html = await (await axios.get('https://nhentai.net/g/'+id)).data
+const $ = cheerio.load(html)
 const match = html.match(/JSON\.parse\((['"`])(.+?)\1\)/)
 
+let images = []
+
+$('.thumb-container').each((i, el) => {
+let url = $(el).find('.lazyload').attr('data-src').replace('https://t', 'https://i').replace((i + 1) + 't', (i + 1));
+images.push(url);
+});
 if(match) {
 let json = match[2].replace(/\\"/g, '"').replace(/\\u([\dA-Fa-f]{4})/g, (m, g) => String.fromCharCode(parseInt(g, 16)))
 let data = JSON.parse(json)
-data.images.pages = data.images.pages.map((v, i) => `https://zorocdn.xyz/galleries/${data.media_id}/${i + 1}.jpg`)
-data.images.cover = `https://zorocdn.xyz/galleries/${data.media_id}/cover.jpg`
-data.images.thumbnail = `https://zorocdn.xyz/galleries/${data.media_id}/thumb.jpg`
-data.tags = data.tags.map(tags => tags.type)
+data.images.pages = images
+data.images.cover = $('meta[itemprop="image"]').attr('content')
+data.images.thumbnail = $('meta[itemprop="image"]').attr('content').replace('cover', 'thumb')
+data.tags = data.tags.map(tags => tags.name)
+
 return data
 }
-
 }
 
 async function nhentaiSearch(query) {
