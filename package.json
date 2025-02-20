@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "*",
     "express": "*",
+    "cheerio": "*",
     "morgan": "*",
     "pdfkit": "^0.13.0"
   },
