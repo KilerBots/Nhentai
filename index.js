@@ -5,6 +5,7 @@ const express = require('express')
 const PDFDocument = require('pdfkit')
 
 const app = express()
+const port = 7860
 app.set('json spaces', 4)
 app.use(morgan('dev'))
 app.use(express.json())
